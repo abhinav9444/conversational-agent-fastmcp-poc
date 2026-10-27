@@ -1,4 +1,4 @@
-""FastAPI endpoints for the conversational agent."""
+"""FastAPI endpoints for the conversational agent."""
 
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
