@@ -1,9 +1,10 @@
-"""FastAPI endpoints for the conversational agent."""
+""FastAPI endpoints for the conversational agent."""
 
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 
 from agent.agent import ConversationalAgent
@@ -48,6 +49,15 @@ app = FastAPI(
     description="Local LLM agent that discovers FastMCP tools to retrieve read-only prospect data.",
     version="0.2.0",
     lifespan=lifespan,
+)
+
+# The Next.js development UI runs on port 3000 and calls this local API.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
 )
 
 
