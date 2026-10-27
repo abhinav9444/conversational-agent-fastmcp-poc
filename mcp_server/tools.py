@@ -11,10 +11,10 @@ from database.repository import ProspectRepository
 logger = logging.getLogger(__name__)
 _repository = ProspectRepository()
 
-Industry = Annotated[str | None, Field(default=None, max_length=100)]
-Stage = Annotated[str | None, Field(default=None, max_length=50)]
-Region = Annotated[str | None, Field(default=None, max_length=50)]
-RiskLevel = Annotated[str | None, Field(default=None, max_length=20)]
+Industry = Annotated[str | None, Field(max_length=100)]
+Stage = Annotated[str | None, Field(max_length=50)]
+Region = Annotated[str | None, Field(max_length=50)]
+RiskLevel = Annotated[str | None, Field(max_length=20)]
 
 
 def get_prospects(
