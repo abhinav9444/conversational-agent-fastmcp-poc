@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 
 from agent.agent import ConversationalAgent
@@ -48,6 +49,21 @@ app = FastAPI(
     description="Local LLM agent that discovers FastMCP tools to retrieve read-only prospect data.",
     version="0.2.0",
     lifespan=lifespan,
+)
+
+# Development-only local origins for the Next.js UI and standalone Orion preview.
+# Keep this allowlist explicit rather than opening the API to every website.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
+    ],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 
