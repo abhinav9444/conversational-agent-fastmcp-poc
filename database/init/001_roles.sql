@@ -12,7 +12,8 @@ END
 $$;
 
 ALTER ROLE orion_reader SET default_transaction_read_only = on;
-GRANT CONNECT ON DATABASE orion TO orion_reader;
+GRANT CONNECT ON DATABASE orion TO orion_admin, orion_reader;
+GRANT USAGE, CREATE ON SCHEMA public TO orion_admin;
 GRANT USAGE ON SCHEMA public TO orion_reader;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO orion_reader;
 ALTER DEFAULT PRIVILEGES FOR ROLE orion_admin IN SCHEMA public
