@@ -57,15 +57,17 @@ curl -s http://localhost:8080/chat \
 
 The response includes an answer, a `conversation_id`, and `tools_invoked` to make the MCP flow observable. Pass the returned `conversation_id` on the next request to preserve conversational context, for example `{"message":"Who owns it?","conversation_id":"<id-from-previous-response>"}`. Check `/ready` to confirm the API discovered its MCP tool.
 
-The API container connects to Ollama at `http://host.docker.internal:11434/v1` by default. The LLM request uses the local OpenAI-compatible endpoint; no hosted LLM is needed. To use LM Studio, start its local server and edit `LLM_BASE_URL` and `LLM_MODEL` in `.env`. Compose demo credentials are intentionally fixed for convenience; replace them and the reader-role password in `database/init/001_roles.sql` before sharing the environment. If you've already initialized the PostgreSQL volume, changing the init SQL won't re-create the role; reset the demo volume with `docker compose down -v` only if you are okay deleting its data.
+The API container connects to Ollama at `http://host.docker.internal:11434/v1` by default. The LLM request uses the local OpenAI-compatible endpoint; no hosted LLM is needed. On Linux, if the API container cannot connect to host-installed Ollama, configure Ollama to listen on the Docker-reachable host interface and restrict access with your host firewall. To use LM Studio, start its local server and set `LLM_BASE_URL` and `LLM_MODEL` in `.env`.
+
+Compose defaults and the credentials in `.env.example` are for local development only. Replace the administrator password and the reader-role password in `database/init/001_roles.sql` before sharing the environment. If you've already initialized the PostgreSQL volume, changing the init SQL won't re-create the role; reset the demo volume with `docker compose down -v` only if you are okay deleting its data.
 
 ## Local development
 
-Use Python 3.12. Install `requirements.txt`, start PostgreSQL, execute `database/init/001_roles.sql` as the database administrator to create the reader role, set `DATABASE_ADMIN_URL` and `DATABASE_URL`, then run `alembic upgrade head`, `python -m database.seed`, and `python -m mcp_server.server`. In another terminal run `uvicorn api.main:app --reload --port 8080`. Ollama or LM Studio should already be running locally with the configured model downloaded.
+Use Python 3.12. The standalone PostgreSQL DDL is in `database/schema.sql`; Docker Compose applies the Alembic migration in `database/migrations/versions`. Install `requirements.txt`, start PostgreSQL, execute `database/init/001_roles.sql` as the database administrator to create the reader role, set `DATABASE_ADMIN_URL` and `DATABASE_URL`, then run `alembic upgrade head`, `python -m database.seed`, and `python -m mcp_server.server`. In another terminal run `uvicorn api.main:app --reload --port 8080`. Ollama or LM Studio should already be running locally with the configured model downloaded.
 
 ## Tests
 
-`pytest` runs unit tests without requiring a running database or LLM. For an integration test against the running MCP service, set `RUN_INTEGRATION_TESTS=1` and `MCP_SERVER_URL=http://localhost:8000/mcp`, then run `pytest tests/test_integration.py`.
+`pytest` runs unit tests without requiring a running database or LLM. For an integration test against the running MCP service, set `RUN_INTEGRATION_TESTS=1` and `MCP_SERVER_URL=http://localhost:8000/mcp`, then run `pytest tests/test_integration.py`. GitHub Actions runs the default unit-test suite on pushes and pull requests.
 
 ## Security boundaries
 
