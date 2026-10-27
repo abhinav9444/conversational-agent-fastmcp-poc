@@ -1,21 +1,20 @@
-from datetime import date
 from decimal import Decimal
 from uuid import uuid4
 
 import pytest
 
-from database.models import Project
+from database.models import Prospect
 
 
 @pytest.fixture
-def sample_project() -> Project:
-    return Project(
-        id=uuid4(),
-        project_name="Project Orion",
-        owner="John Doe",
-        status="Active",
-        description="AI agent platform modernization initiative",
-        budget=Decimal("500000.00"),
-        start_date=date(2025, 1, 15),
-        end_date=date(2027, 6, 30),
+def sample_prospect() -> Prospect:
+    return Prospect(
+        prospect_id=uuid4(),
+        company_name="HelixNova Biologics",
+        industry="Biotech",
+        opportunity_description="Scale-up and analytical development for a monoclonal antibody program.",
+        opportunity_stage="Negotiation",
+        opportunity_value_usd=Decimal("2400000.00"),
+        region="Europe",
+        risk_level="High",
     )
