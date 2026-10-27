@@ -1,0 +1,1 @@
+"""FastMCP data-access server."""
