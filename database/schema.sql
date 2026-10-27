@@ -1,16 +1,26 @@
--- Reference DDL for the Project Orion POC.
--- The Alembic migration in database/migrations/versions is used by Docker Compose.
+-- Reference DDL for the Lonza Business Development POC.
+-- Alembic migrations are the source of truth for application deployments.
 
-CREATE TABLE IF NOT EXISTS projects (
-    id UUID PRIMARY KEY,
-    project_name VARCHAR(255) NOT NULL,
-    owner VARCHAR(255) NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    description TEXT NOT NULL,
-    budget NUMERIC(14, 2) NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE NULL,
-    CONSTRAINT uq_projects_project_name UNIQUE (project_name)
+CREATE TABLE IF NOT EXISTS prospects (
+    prospect_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_name TEXT NOT NULL,
+    industry TEXT NOT NULL,
+    opportunity_description TEXT NOT NULL,
+    opportunity_stage TEXT NOT NULL CHECK (
+        opportunity_stage IN (
+            'New', 'Qualified', 'In Discussion', 'Proposal Sent',
+            'Negotiation', 'Closed Won', 'Closed Lost'
+        )
+    ),
+    opportunity_value_usd NUMERIC(14, 2) NOT NULL CHECK (opportunity_value_usd >= 0),
+    region TEXT NOT NULL CHECK (region IN ('North America', 'Europe', 'APAC')),
+    risk_level TEXT NOT NULL CHECK (risk_level IN ('Low', 'Medium', 'High')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-GRANT SELECT ON TABLE projects TO orion_reader;
+CREATE INDEX IF NOT EXISTS ix_prospects_company_name ON prospects (company_name);
+CREATE INDEX IF NOT EXISTS ix_prospects_industry ON prospects (industry);
+CREATE INDEX IF NOT EXISTS ix_prospects_opportunity_stage ON prospects (opportunity_stage);
+
+GRANT SELECT ON TABLE prospects TO orion_reader;
