@@ -11,37 +11,26 @@ class FakeMCPClient:
     def __init__(self):
         self.tool_names = set()
         self.calls = []
-        self._tools = [
-            {
-                "type": "function",
-                "function": {
-                    "name": "get_project_information",
-                    "description": "Retrieve a project record.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {"project_name": {"type": "string"}},
-                        "required": ["project_name"],
-                    },
-                },
-            }
-        ]
+        self._tools = [{
+            "type": "function",
+            "function": {
+                "name": "get_prospects",
+                "description": "Retrieve prospect records.",
+                "parameters": {"type": "object", "properties": {"region": {"type": "string"}}},
+            },
+        }]
 
     @property
     def openai_tools(self):
         return self._tools
 
     async def discover_tools(self):
-        self.tool_names = {"get_project_information"}
+        self.tool_names = {"get_prospects"}
         return self._tools
 
     async def call_tool(self, name, arguments):
         self.calls.append((name, arguments))
-        return {
-            "project_name": arguments["project_name"],
-            "owner": "John Doe",
-            "status": "Active",
-            "budget": 500000.0,
-        }
+        return {"prospects": [{"company_name": "HelixNova Biologics", "opportunity_value_usd": 2400000}], "total_count": 1}
 
 
 class FakeMessage:
@@ -54,14 +43,9 @@ class FakeMessage:
             "role": "assistant",
             "content": None,
             "tool_calls": [
-                {
-                    "id": call.id,
-                    "type": "function",
-                    "function": {
-                        "name": call.function.name,
-                        "arguments": call.function.arguments,
-                    },
-                }
+                {"id": call.id, "type": "function", "function": {
+                    "name": call.function.name, "arguments": call.function.arguments
+                }}
                 for call in self.tool_calls
             ],
         }
@@ -79,15 +63,13 @@ class FakeCompletions:
             tool_call = SimpleNamespace(
                 id="call-1",
                 function=SimpleNamespace(
-                    name="get_project_information",
-                    arguments=json.dumps({"project_name": "Project Orion"}),
+                    name="get_prospects",
+                    arguments=json.dumps({"region": "Europe"}),
                 ),
             )
             message = FakeMessage(tool_calls=[tool_call])
         else:
-            message = FakeMessage(
-                content="Project Orion is active, owned by John Doe, with a budget of $500,000."
-            )
+            message = FakeMessage(content="One fictional prospect is listed at $2,400,000.")
         return SimpleNamespace(choices=[SimpleNamespace(message=message)])
 
 
@@ -102,20 +84,18 @@ class FakeLLMClient:
 
 
 @pytest.mark.asyncio
-async def test_agent_discovers_and_invokes_tool_then_summarizes() -> None:
+async def test_agent_discovers_and_invokes_prospect_tool_then_summarizes() -> None:
     settings = Settings(mcp_discovery_attempts=1, max_tool_rounds=2)
     mcp_client = FakeMCPClient()
     llm_client = FakeLLMClient()
     agent = ConversationalAgent(settings=settings, mcp_client=mcp_client, llm_client=llm_client)
 
     await agent.initialize()
-    result = await agent.chat("Tell me about Project Orion")
+    result = await agent.chat("Show prospects in Europe")
 
-    assert result["tools_invoked"] == ["get_project_information"]
-    assert "John Doe" in result["answer"]
-    assert mcp_client.calls == [
-        ("get_project_information", {"project_name": "Project Orion"})
-    ]
+    assert result["tools_invoked"] == ["get_prospects"]
+    assert "$2,400,000" in result["answer"]
+    assert mcp_client.calls == [("get_prospects", {"region": "Europe"})]
     assert (await agent.memory.get_history(result["conversation_id"]))[-1]["content"] == result["answer"]
     await agent.close()
     assert llm_client.closed
