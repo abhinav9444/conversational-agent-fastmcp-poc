@@ -44,9 +44,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(
-    title="Project Orion Conversational Agent",
-    description="Local LLM agent that discovers FastMCP tools to retrieve read-only project data.",
-    version="0.1.0",
+    title="Orion Business Development Agent",
+    description="Local LLM agent that discovers FastMCP tools to retrieve read-only prospect data.",
+    version="0.2.0",
     lifespan=lifespan,
 )
 
@@ -68,7 +68,7 @@ async def ready(request: Request) -> dict[str, str]:
 
 @app.post("/chat", response_model=ChatResponse, tags=["chat"])
 async def chat(payload: ChatRequest, request: Request) -> ChatResponse:
-    """Ask about a project in natural language."""
+    """Ask about prospects in natural language."""
     agent: ConversationalAgent = request.app.state.agent
     try:
         result = await agent.chat(payload.message, payload.conversation_id)
