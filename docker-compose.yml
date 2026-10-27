@@ -2,16 +2,16 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: orion
-      POSTGRES_USER: orion_admin
-      POSTGRES_PASSWORD: orion_admin_dev
+      POSTGRES_DB: ${POSTGRES_DB:-orion}
+      POSTGRES_USER: ${POSTGRES_USER:-orion_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-orion_admin_dev}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init/001_roles.sql:/docker-entrypoint-initdb.d/001_roles.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U orion_admin -d orion"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-orion_admin} -d ${POSTGRES_DB:-orion}"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -20,8 +20,8 @@ services:
     build: .
     command: ["sh", "-c", "alembic upgrade head && python -m database.seed && python -m mcp_server.server"]
     environment:
-      DATABASE_ADMIN_URL: postgresql+psycopg://orion_admin:orion_admin_dev@postgres:5432/orion
-      DATABASE_URL: postgresql+psycopg://orion_reader:orion_reader_dev@postgres:5432/orion
+      DATABASE_ADMIN_URL: postgresql+psycopg://${POSTGRES_USER:-orion_admin}:${POSTGRES_PASSWORD:-orion_admin_dev}@postgres:5432/${POSTGRES_DB:-orion}
+      DATABASE_URL: postgresql+psycopg://orion_reader:orion_reader_dev@postgres:5432/${POSTGRES_DB:-orion}
       MCP_DISCOVERY_ATTEMPTS: 30
     depends_on:
       postgres:
@@ -35,9 +35,9 @@ services:
     command: ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8080"]
     environment:
       MCP_SERVER_URL: http://mcp-server:8000/mcp
-      LLM_BASE_URL: http://host.docker.internal:11434/v1
-      LLM_API_KEY: local-only
-      LLM_MODEL: qwen2.5:3b
+      LLM_BASE_URL: ${LLM_BASE_URL:-http://host.docker.internal:11434/v1}
+      LLM_API_KEY: ${LLM_API_KEY:-local-only}
+      LLM_MODEL: ${LLM_MODEL:-qwen2.5:3b}
       MCP_DISCOVERY_ATTEMPTS: 30
       MCP_DISCOVERY_RETRY_SECONDS: 1.0
       MAX_HISTORY_MESSAGES: 20
