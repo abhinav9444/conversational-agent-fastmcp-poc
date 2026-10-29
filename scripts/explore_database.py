@@ -4,12 +4,20 @@ from __future__ import annotations
 
 import sys
 from decimal import Decimal
+from pathlib import Path
 from typing import Any
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Connection
 
-from config import get_settings
+# When run as python scripts/explore_database.py, Python puts scripts/ first
+# on sys.path. Add the repository root so the local config.py wins over any
+# unrelated third-party package named config.
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from config import get_settings  # noqa: E402
 
 
 MAX_COLUMN_WIDTH = 42
