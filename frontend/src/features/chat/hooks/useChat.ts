@@ -176,17 +176,16 @@ export function useChat() {
 
   const deleteSession = useCallback((sessionId: string) => {
     if (isSending) return;
-    setSessions((current) => {
-      const remaining = current.filter((session) => session.id !== sessionId);
-      if (remaining.length === 0) {
-        const fresh = makeSession();
-        setActiveSessionId(fresh.id);
-        return [fresh];
-      }
-      if (activeSessionId === sessionId) setActiveSessionId(remaining[0].id);
-      return remaining;
-    });
-  }, [activeSessionId, isSending]);
+    const remaining = sessions.filter((session) => session.id !== sessionId);
+    if (remaining.length === 0) {
+      const fresh = makeSession();
+      setSessions([fresh]);
+      setActiveSessionId(fresh.id);
+      return;
+    }
+    setSessions(remaining);
+    if (activeSessionId === sessionId) setActiveSessionId(remaining[0].id);
+  }, [activeSessionId, isSending, sessions]);
 
   return {
     sessions,
