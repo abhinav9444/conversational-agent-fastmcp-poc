@@ -28,6 +28,7 @@ export function ChatWindow() {
     <main className="app-shell">
       <aside className="sidebar">
         <div className="brand-lockup">
+          <img className="brand-logo" src="/orion-compass.svg" alt="" aria-hidden="true" />
           <div className="brand-name">orion</div>
         </div>
         <button className="new-chat-button" type="button" onClick={startNewChat}>
