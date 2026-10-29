@@ -148,3 +148,62 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid rgba(49, 94, 2
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+/* Minimal chat + session history */
+.brand-lockup { margin-bottom: 28px; padding: 0 10px; }
+.brand-name { font-size: 27px; letter-spacing: -1.2px; }
+.brand-subtitle { display: none; }
+.sidebar { padding-top: 25px; }
+.new-chat-button { height: 40px; border-radius: 8px; background: #315ee7; border-color: #315ee7; color: white; font-size: 12px; }
+.new-chat-button:hover { background: #254bc4; }
+.new-chat-button span { font-size: 17px; }
+.history-heading { padding: 27px 10px 10px; color: #929aa7; font-size: 10px; font-weight: 700; letter-spacing: 1px; }
+.history-list { display: flex; flex-direction: column; gap: 3px; overflow-y: auto; }
+.history-item { display: flex; align-items: center; gap: 3px; min-width: 0; border-radius: 7px; }
+.history-item-active { background: #f0f3ff; }
+.history-select { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; padding: 10px 8px; border: 0; background: transparent; text-align: left; color: #596475; font-size: 12px; }
+.history-select span:last-child { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.history-item-active .history-select { color: #2c51ce; font-weight: 600; }
+.history-chat-icon { color: #9aa3b1; font-size: 14px; }
+.history-delete { margin-right: 5px; width: 24px; height: 24px; border: 0; border-radius: 5px; background: transparent; color: #929aa7; font-size: 18px; opacity: 0; }
+.history-item:hover .history-delete, .history-delete:focus-visible { opacity: 1; }
+.history-delete:hover { background: #e2e7f7; color: #374151; }
+.history-empty { padding: 0 10px; color: #929aa7; font-size: 12px; }
+.sidebar-footer { margin-top: auto; padding-top: 18px; font-size: 9px; }
+.topbar { height: 68px; flex-basis: 68px; padding: 0 30px; }
+.topbar h1 { font-size: 14px; }
+.topbar-subtitle { margin-top: 3px; font-size: 11px; }
+.topbar-new-chat { border: 1px solid var(--line); border-radius: 7px; padding: 8px 11px; background: white; color: #596475; font-size: 11px; }
+.topbar-new-chat:hover { background: #f6f8fb; }
+.privacy-pill, .icon-button { display: none; }
+.conversation-column { max-width: 850px; padding-top: 30px; }
+.date-divider { display: none; }
+.empty-state { max-width: 520px; margin: 12vh auto 32px; text-align: center; }
+.empty-state h2 { margin: 0; color: #242a34; font-size: 22px; font-weight: 600; letter-spacing: -.5px; }
+.empty-state p { margin: 10px 0 22px; color: #818a98; font-size: 13px; }
+.quick-prompts { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.quick-prompts button { display: flex; align-items: center; gap: 12px; border: 1px solid #e4e8ee; border-radius: 8px; padding: 10px 12px; background: white; color: #596475; font-size: 11px; }
+.quick-prompts button:hover { border-color: #bdcafa; background: #fbfcff; }
+.quick-prompts button span { color: #315ee7; }
+.messages-list { gap: 22px; }
+.message-row { gap: 9px; }
+.avatar-orion { display: none; }
+.message-stack { max-width: min(720px, calc(100% - 42px)); }
+.message-bubble { box-shadow: none; border-radius: 9px; padding: 13px 15px; }
+.message-bubble-user { border-radius: 9px; }
+.composer-area { padding: 12px 24px 13px; background: #f7f8fa; }
+.composer { border-radius: 10px; box-shadow: none; }
+.disclaimer { margin-top: 7px; font-size: 10px; }
+@media (max-width: 650px) {
+  .sidebar { display: flex; width: 190px; flex-basis: 190px; padding: 18px 10px 12px; }
+  .brand-lockup { margin-bottom: 20px; }
+  .topbar { padding: 0 12px; }
+  .topbar-new-chat { padding: 7px 8px; font-size: 10px; }
+  .conversation-column { padding: 18px 10px; }
+  .empty-state { margin: 8vh auto 24px; }
+  .empty-state h2 { font-size: 18px; }
+  .quick-prompts { flex-direction: column; }
+  .quick-prompts button { justify-content: space-between; }
+  .message-stack { max-width: calc(100% - 8px); }
+  .composer-area { padding: 9px 9px 11px; }
+}
