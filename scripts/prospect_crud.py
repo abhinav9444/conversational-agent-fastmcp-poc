@@ -40,7 +40,7 @@ def print_prospect(prospect: Prospect) -> None:
     print(f"Industry:          {prospect.industry}")
     print(f"Description:       {prospect.opportunity_description}")
     print(f"Stage:             {prospect.opportunity_stage}")
-    print(f"Opportunity value: \${prospect.opportunity_value_usd:,.2f}")
+    print("Opportunity value: $" + f"{prospect.opportunity_value_usd:,.2f}")
     print(f"Region:            {prospect.region}")
     print(f"Risk:              {prospect.risk_level}")
     print(f"Created:           {prospect.created_at}")
