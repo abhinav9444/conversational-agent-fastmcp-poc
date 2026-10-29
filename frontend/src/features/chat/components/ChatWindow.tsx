@@ -69,7 +69,6 @@ export function ChatWindow() {
             <h1>{activeSession?.title || "New chat"}</h1>
             <div className="topbar-subtitle">Prospect intelligence</div>
           </div>
-          <button className="topbar-new-chat" type="button" onClick={startNewChat}>＋ New chat</button>
         </header>
 
         <div className="messages-scroll">
