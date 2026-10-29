@@ -19,7 +19,8 @@ const welcomeMessage: ChatMessage = {
   role: "assistant",
   content:
     "Hi! I’m Orion, your prospect data assistant. Ask me about opportunity value, industries, stages, regions, or risk levels. I’ll retrieve relevant records through the connected data tool.",
-  createdAt: timestamp()
+  // Keep the server-rendered welcome message identical during browser hydration.
+  createdAt: "2000-01-01T00:00:00.000Z"
 };
 
 export function useChat() {
