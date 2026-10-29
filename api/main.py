@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 
 from agent.agent import ConversationalAgent
@@ -44,10 +45,25 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(
-    title="Project Orion Conversational Agent",
-    description="Local LLM agent that discovers FastMCP tools to retrieve read-only project data.",
-    version="0.1.0",
+    title="Orion Business Development Agent",
+    description="Local LLM agent that discovers FastMCP tools to retrieve read-only prospect data.",
+    version="0.2.0",
     lifespan=lifespan,
+)
+
+# Development-only local origins for the Next.js UI and standalone Orion preview.
+# Keep this allowlist explicit rather than opening the API to every website.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
+    ],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 
@@ -68,7 +84,7 @@ async def ready(request: Request) -> dict[str, str]:
 
 @app.post("/chat", response_model=ChatResponse, tags=["chat"])
 async def chat(payload: ChatRequest, request: Request) -> ChatResponse:
-    """Ask about a project in natural language."""
+    """Ask about prospects in natural language."""
     agent: ConversationalAgent = request.app.state.agent
     try:
         result = await agent.chat(payload.message, payload.conversation_id)

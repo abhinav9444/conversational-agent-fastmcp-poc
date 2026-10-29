@@ -1,6 +1,5 @@
-"""Idempotently insert ten sample projects for local demos."""
+"""Idempotently seed ten fictional prospects for the local Lonza demo."""
 
-from datetime import date
 from decimal import Decimal
 from uuid import uuid4
 
@@ -8,118 +7,120 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
 from config import get_settings
-from database.models import Project
+from database.models import Prospect
 
 
-SAMPLE_PROJECTS: tuple[dict[str, object], ...] = (
+SAMPLE_PROSPECTS: tuple[dict[str, object], ...] = (
     {
-        "project_name": "Project Orion",
-        "owner": "John Doe",
-        "status": "Active",
-        "description": "AI agent platform modernization initiative",
-        "budget": Decimal("500000.00"),
-        "start_date": date(2025, 1, 15),
-        "end_date": date(2027, 6, 30),
+        "company_name": "Northstar Cellworks",
+        "industry": "Cell & Gene Therapy",
+        "opportunity_description": "Process development and GMP manufacturing support for an early-stage autologous cell therapy.",
+        "opportunity_stage": "Qualified",
+        "opportunity_value_usd": Decimal("1850000.00"),
+        "region": "North America",
+        "risk_level": "Medium",
     },
     {
-        "project_name": "Project Phoenix",
-        "owner": "Jane Smith",
-        "status": "Planning",
-        "description": "Resilience and disaster recovery platform refresh",
-        "budget": Decimal("325000.00"),
-        "start_date": date(2026, 2, 1),
-        "end_date": date(2027, 12, 31),
+        "company_name": "HelixNova Biologics",
+        "industry": "Biotech",
+        "opportunity_description": "Scale-up and analytical development for a novel monoclonal antibody program.",
+        "opportunity_stage": "Negotiation",
+        "opportunity_value_usd": Decimal("2400000.00"),
+        "region": "Europe",
+        "risk_level": "High",
     },
     {
-        "project_name": "Project Atlas",
-        "owner": "Jane Smith",
-        "status": "Active",
-        "description": "Enterprise data catalog and governance implementation",
-        "budget": Decimal("420000.00"),
-        "start_date": date(2025, 7, 1),
-        "end_date": date(2027, 3, 31),
+        "company_name": "CedarBridge Pharma",
+        "industry": "Pharma",
+        "opportunity_description": "Commercial supply planning and technology transfer for a specialty injectable.",
+        "opportunity_stage": "Proposal Sent",
+        "opportunity_value_usd": Decimal("1250000.00"),
+        "region": "Europe",
+        "risk_level": "Low",
     },
     {
-        "project_name": "Project Titan",
-        "owner": "Michael Chen",
-        "status": "On Hold",
-        "description": "Legacy infrastructure consolidation",
-        "budget": Decimal("780000.00"),
-        "start_date": date(2024, 9, 1),
-        "end_date": date(2027, 9, 30),
+        "company_name": "BluePeak Therapeutics",
+        "industry": "Biotech",
+        "opportunity_description": "Early clinical biologics manufacturing and process characterization.",
+        "opportunity_stage": "In Discussion",
+        "opportunity_value_usd": Decimal("875000.00"),
+        "region": "North America",
+        "risk_level": "Medium",
     },
     {
-        "project_name": "Project Helios",
-        "owner": "Priya Nair",
-        "status": "Active",
-        "description": "Energy usage analytics and reporting",
-        "budget": Decimal("265000.00"),
-        "start_date": date(2025, 3, 1),
-        "end_date": date(2026, 12, 31),
+        "company_name": "Asterion Vector Labs",
+        "industry": "Cell & Gene Therapy",
+        "opportunity_description": "Viral vector process development with a potential path to clinical manufacturing.",
+        "opportunity_stage": "New",
+        "opportunity_value_usd": Decimal("3100000.00"),
+        "region": "APAC",
+        "risk_level": "High",
     },
     {
-        "project_name": "Project Nova",
-        "owner": "Alex Morgan",
-        "status": "Completed",
-        "description": "Internal developer portal launch",
-        "budget": Decimal("190000.00"),
-        "start_date": date(2024, 1, 15),
-        "end_date": date(2025, 5, 15),
+        "company_name": "Meridian Contract Services",
+        "industry": "CDMO",
+        "opportunity_description": "Drug product fill-finish and packaging services for a late-stage program.",
+        "opportunity_stage": "Qualified",
+        "opportunity_value_usd": Decimal("980000.00"),
+        "region": "Europe",
+        "risk_level": "Low",
     },
     {
-        "project_name": "Project Aurora",
-        "owner": "Sara Patel",
-        "status": "Planning",
-        "description": "Customer experience modernization",
-        "budget": Decimal("610000.00"),
-        "start_date": date(2026, 5, 1),
-        "end_date": date(2028, 1, 31),
+        "company_name": "Redwood Immunology",
+        "industry": "Biotech",
+        "opportunity_description": "Clinical manufacturing slot for an immunology biologic with an accelerated timeline.",
+        "opportunity_stage": "Proposal Sent",
+        "opportunity_value_usd": Decimal("1650000.00"),
+        "region": "North America",
+        "risk_level": "High",
     },
     {
-        "project_name": "Project Quantum",
-        "owner": "David Kim",
-        "status": "Active",
-        "description": "Applied machine learning experimentation platform",
-        "budget": Decimal("450000.00"),
-        "start_date": date(2025, 10, 1),
-        "end_date": date(2027, 10, 1),
+        "company_name": "Eastwind BioPharma",
+        "industry": "Pharma",
+        "opportunity_description": "Analytical testing and stability services for a regional product launch.",
+        "opportunity_stage": "Closed Won",
+        "opportunity_value_usd": Decimal("720000.00"),
+        "region": "APAC",
+        "risk_level": "Low",
     },
     {
-        "project_name": "Project Polaris",
-        "owner": "Maya Rao",
-        "status": "At Risk",
-        "description": "Identity lifecycle and access governance improvement",
-        "budget": Decimal("385000.00"),
-        "start_date": date(2025, 4, 1),
-        "end_date": date(2027, 4, 1),
+        "company_name": "SilverFern Bioprocess",
+        "industry": "CDMO",
+        "opportunity_description": "Process validation and manufacturing support for a biosimilar candidate.",
+        "opportunity_stage": "Negotiation",
+        "opportunity_value_usd": Decimal("2150000.00"),
+        "region": "Europe",
+        "risk_level": "Medium",
     },
     {
-        "project_name": "Project Vertex",
-        "owner": "Oliver Brown",
-        "status": "Active",
-        "description": "Observability and service reliability uplift",
-        "budget": Decimal("295000.00"),
-        "start_date": date(2026, 1, 10),
-        "end_date": date(2027, 11, 30),
+        "company_name": "Cobalt Ridge Therapeutics",
+        "industry": "Biotech",
+        "opportunity_description": "Development services for a recombinant protein entering first-in-human studies.",
+        "opportunity_stage": "Closed Lost",
+        "opportunity_value_usd": Decimal("540000.00"),
+        "region": "North America",
+        "risk_level": "Low",
     },
 )
 
 
-def seed_projects() -> int:
-    """Insert missing sample rows and return the number inserted."""
+def seed_prospects() -> int:
+    """Insert missing sample companies and return the number inserted."""
     settings = get_settings()
     engine = create_engine(settings.database_admin_url, pool_pre_ping=True)
     factory = sessionmaker(bind=engine, expire_on_commit=False)
     inserted = 0
     try:
         with factory() as session:
-            for item in SAMPLE_PROJECTS:
+            for item in SAMPLE_PROSPECTS:
                 existing = session.scalar(
-                    select(Project.id).where(Project.project_name == item["project_name"])
+                    select(Prospect.prospect_id).where(
+                        Prospect.company_name == item["company_name"]
+                    )
                 )
                 if existing is not None:
                     continue
-                session.add(Project(id=uuid4(), **item))
+                session.add(Prospect(prospect_id=uuid4(), **item))
                 inserted += 1
             session.commit()
     finally:
@@ -128,5 +129,5 @@ def seed_projects() -> int:
 
 
 if __name__ == "__main__":
-    count = seed_projects()
-    print(f"Inserted {count} project record(s).")
+    count = seed_prospects()
+    print(f"Inserted {count} prospect record(s).")

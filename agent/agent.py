@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class ConversationalAgent:
-    """LLM orchestration layer; all project-data access goes through MCP."""
+    """LLM orchestration layer; all prospect-data access goes through MCP."""
 
     def __init__(
         self,
