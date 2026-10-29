@@ -24,7 +24,6 @@ export function ChatWindow() {
     <main className="app-shell">
       <aside className="sidebar">
         <div className="brand-lockup">
-          <div className="brand-mark">O</div>
           <div>
             <div className="brand-name">orion</div>
             <div className="brand-subtitle">DATA INTELLIGENCE</div>
@@ -56,7 +55,6 @@ export function ChatWindow() {
       <section className="chat-panel">
         <header className="topbar">
           <div className="topbar-title">
-            <div className="mobile-brand-mark">O</div>
             <div>
               <h1>Prospect intelligence</h1>
               <div className="topbar-subtitle"><span className="status-dot" /> Connected to local agent</div>
