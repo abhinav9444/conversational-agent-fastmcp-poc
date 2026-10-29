@@ -150,7 +150,9 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid rgba(49, 94, 2
 }
 
 /* Minimal chat + session history */
-.brand-lockup { margin-bottom: 28px; padding: 0 10px; }
+.brand-lockup { margin-bottom: 28px; padding: 0 10px; gap: 9px; }
+.brand-logo { display: block; width: 32px; height: 32px; flex: 0 0 32px; object-fit: contain; }
+
 .brand-name { font-size: 27px; letter-spacing: -1.2px; }
 .brand-subtitle { display: none; }
 .sidebar { padding-top: 25px; }
