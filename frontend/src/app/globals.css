@@ -23,8 +23,6 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid rgba(49, 94, 2
 .app-shell { min-height: 100dvh; display: flex; }
 .sidebar { width: 254px; flex: 0 0 254px; padding: 27px 17px 18px; background: #fff; border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 100dvh; }
 .brand-lockup { display: flex; align-items: center; gap: 11px; padding: 0 9px; margin-bottom: 37px; }
-.brand-mark, .mobile-brand-mark { display: grid; place-items: center; color: white; background: #315ee7; border-radius: 12px; font-family: Manrope, sans-serif; font-weight: 800; box-shadow: 0 5px 12px rgba(49, 94, 231, .2); }
-.brand-mark { width: 39px; height: 39px; font-size: 23px; }
 .brand-name { font: 800 25px/1 Manrope, sans-serif; letter-spacing: -1.4px; }
 .brand-subtitle { color: #929aa7; font-size: 9px; letter-spacing: 1.5px; font-weight: 700; margin-top: 5px; }
 .new-chat-button { display: flex; align-items: center; justify-content: center; gap: 9px; height: 43px; border: 1px solid #dce4ff; border-radius: 10px; background: #f4f6ff; color: #3155c6; font-weight: 600; transition: background .15s ease; }
@@ -57,7 +55,6 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid rgba(49, 94, 2
 .privacy-pill { display: flex; align-items: center; gap: 6px; border: 1px solid #e5eee9; border-radius: 30px; padding: 7px 11px; color: #4e8b70; background: #f7fcf9; font-size: 10px; font-weight: 600; }
 .icon-button { width: 33px; height: 33px; border: 1px solid var(--line); background: white; color: #687383; border-radius: 9px; font-size: 19px; }
 .icon-button:hover { background: #f6f8fb; }
-.mobile-brand-mark { display: none; width: 32px; height: 32px; }
 
 .messages-scroll { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
 .conversation-column { max-width: 850px; margin: 0 auto; padding: 30px 42px 28px; }
@@ -132,7 +129,6 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid rgba(49, 94, 2
   .sidebar { display: none; }
   .chat-panel { height: 100dvh; }
   .topbar { height: 67px; flex-basis: 67px; padding: 0 15px; }
-  .mobile-brand-mark { display: grid; }
   .topbar h1 { font-size: 13px; }
   .privacy-pill { padding: 6px 8px; font-size: 9px; }
   .topbar-right { gap: 7px; }
