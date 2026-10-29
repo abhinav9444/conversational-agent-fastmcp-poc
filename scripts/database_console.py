@@ -195,11 +195,8 @@ def explore_database(engine: Any, selected: int | None = None) -> None:
                 run_question(connection, selected)
             connection.rollback()
     except SQLAlchemyError as exc:
+        # The connection context manager closes and rolls back any failed transaction.
         print(f"\nRead-only exploration failed: {exc}")
-        try:
-            connection.rollback()
-        except (UnboundLocalError, Exception):
-            pass
 
 
 def insights_menu(engine: Any) -> None:
