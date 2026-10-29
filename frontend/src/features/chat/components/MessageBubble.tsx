@@ -20,7 +20,9 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       <div className="message-stack">
         <div className="message-meta">
           <span>{isUser ? "You" : "Orion"}</span>
-          <time dateTime={message.createdAt}>{formatTime(message.createdAt)}</time>
+          {message.id !== "orion-welcome" && (
+            <time dateTime={message.createdAt}>{formatTime(message.createdAt)}</time>
+          )}
         </div>
         <div
           className={[
