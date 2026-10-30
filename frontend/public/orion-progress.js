@@ -6,33 +6,47 @@
     "Thinking through your request",
     "Connecting the relevant details",
     "Working through the possibilities",
-    "Putting the answer together"
+    "Preparing a clear answer"
   ];
+
   const style = document.createElement("style");
   style.textContent = `
     .orion-progress-copy {
-      display: inline-block;
+      display: inline-block !important;
       color: transparent !important;
-      background: linear-gradient(100deg, #7783a5 10%, #b39aff 35%, #ffffff 50%, #9c83f4 65%, #7783a5 90%);
-      background-size: 220% auto;
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: orion-progress-shimmer 2.2s linear infinite;
-      font-weight: 500;
+      background: linear-gradient(100deg, #7482a5 8%, #a68cf5 32%, #ffffff 50%, #a68cf5 68%, #7482a5 92%) !important;
+      background-size: 240% 100% !important;
+      background-clip: text !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      animation: orion-progress-shimmer 2s linear infinite !important;
+      font-style: normal !important;
+      font-weight: 600 !important;
       letter-spacing: .01em;
     }
     @keyframes orion-progress-shimmer {
-      to { background-position: -220% center; }
+      from { background-position: 120% center; }
+      to { background-position: -140% center; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .orion-progress-copy { animation: none; background-position: center; }
+      .orion-progress-copy { animation: none !important; background-position: center !important; }
     }
   `;
   (document.head || document.documentElement).appendChild(style);
 
   let phraseIndex = 0;
   let rotation = null;
+
+  function findThinkingElements() {
+    return Array.from(document.body.querySelectorAll("*")).filter((element) => {
+      if (element.classList.contains("orion-progress-copy")) return false;
+      const text = (element.textContent || "").replace(/\s+/g, " ").trim();
+      if (!/^thinking(?:…|\.{3})?$/i.test(text)) return false;
+      return !Array.from(element.children).some((child) =>
+        /^thinking(?:…|\.{3})?$/i.test((child.textContent || "").replace(/\s+/g, " ").trim())
+      );
+    });
+  }
 
   function startRotation() {
     if (rotation) return;
@@ -48,31 +62,18 @@
       active.forEach((node) => {
         node.textContent = phrases[phraseIndex] + "…";
       });
-    }, 1900);
+    }, 1800);
   }
 
   function enhanceThinkingText() {
-    const walker = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_TEXT
-    );
-    const candidates = [];
-    while (walker.nextNode()) {
-      const node = walker.currentNode;
-      if (/^thinking(?:…|\.{3})?$/i.test((node.nodeValue || "").trim())) {
-        candidates.push(node);
-      }
-    }
-
-    candidates.forEach((node) => {
-      const parent = node.parentElement;
-      if (!parent || parent.closest(".orion-progress-copy")) return;
+    findThinkingElements().forEach((element) => {
       const progress = document.createElement("span");
       progress.className = "orion-progress-copy";
       progress.setAttribute("role", "status");
       progress.setAttribute("aria-live", "polite");
       progress.textContent = phrases[phraseIndex] + "…";
-      node.parentNode.replaceChild(progress, node);
+      element.replaceChildren(progress);
+      element.classList.add("orion-progress-host");
       startRotation();
     });
   }
