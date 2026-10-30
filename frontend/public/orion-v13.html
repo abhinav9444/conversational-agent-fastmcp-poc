@@ -8371,7 +8371,7 @@ document.head.insertAdjacentHTML('beforeend', '<style data-orion-chat-runtime>' 
   '.orion-history-list .orion-history-select:hover,.orion-history-list .orion-history-select.on{background:var(--s2-panel)}' +
   '.orion-history-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.orion-history-when{flex:none;color:var(--s2-sub);font-size:11px}' +
   '.orion-history-empty{padding:8px 4px 8px 20px;color:var(--s2-sub);font-size:12px}' +
-  '.orion-chat-pending{color:var(--s2-sub);font-style:italic}.orion-chat-error{color:#9c4141}' +
+  '.orion-chat-pending{display:inline-block;color:transparent!important;font-style:normal!important;font-weight:600;background-image:linear-gradient(90deg,#7885a8 0%,#9d8be8 24%,#fff 48%,#a58bf4 62%,#7885a8 100%);background-size:250% 100%;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:orionPendingShimmer 1.8s linear infinite}.orion-chat-error{color:#9c4141}@keyframes orionPendingShimmer{from{background-position:180% center}to{background-position:-80% center}}@media(prefers-reduced-motion:reduce){.orion-chat-pending{animation:none;background-position:center}}' +
   '</style>');
 const _orionBaseNavHtml = navHtml;
 navHtml = function () {
@@ -8426,7 +8426,7 @@ respond = async function (rawText, via) {
   if (!Array.isArray(S.chat[tab])) S.chat[tab] = [];
   if (session.title === 'New conversation') session.title = message.replace(/\s+/g, ' ').slice(0, 64);
   S.chat[tab].push({ who: 'me', text: message, via: via || '' });
-  const pendingIndex = S.chat[tab].push({ who: 'orion', html: '<span class="orion-chat-pending">Thinking…</span>' }) - 1;
+  const pendingIndex = S.chat[tab].push({ who: 'orion', html: '<span class="orion-chat-pending">Thinking through your request…</span>' }) - 1;
   ORION_CHAT_PENDING = true;
   orionChatPersist(session, tab);
   render();
@@ -9235,5 +9235,33 @@ document.head.insertAdjacentHTML('beforeend', '<style data-v13="tasks-board">' +
   '.v13body{padding-top:var(--s2-sp-sm)}.v13vs{margin-left:var(--s2-sp-md)}.v13vs button{gap:6px}.v13vs .i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}' +
   '.v13body.v13bt{overflow:auto}.v13tasks{padding:0 20px 24px}.v13tasks .v13sub{margin-top:var(--s2-sp-lg, 24px)}.v13tasks .v13sub:first-child{margin-top:8px}</style>');
 render();
+(function installOrionPendingProgress() {
+  const phrases = [
+    'Thinking through your request',
+    'Connecting the relevant details',
+    'Working through the possibilities',
+    'Preparing a clear answer'
+  ];
+  let phraseIndex = 0;
+  const applyCurrentPhrase = () => {
+    document.querySelectorAll('.orion-chat-pending').forEach(node => {
+      node.textContent = phrases[phraseIndex] + '…';
+    });
+  };
+  const observer = new MutationObserver(() => {
+    document.querySelectorAll('.orion-chat-pending').forEach(node => {
+      if (node.dataset.orionProgressReady !== 'true') {
+        node.dataset.orionProgressReady = 'true';
+        node.textContent = phrases[phraseIndex] + '…';
+      }
+    });
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+  applyCurrentPhrase();
+  window.setInterval(() => {
+    phraseIndex = (phraseIndex + 1) % phrases.length;
+    applyCurrentPhrase();
+  }, 1800);
+})(); 
 </script>
 </body></html>
