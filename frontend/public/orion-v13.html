@@ -6748,7 +6748,7 @@ reachDetail = function () {
 
 /* ---- S10 Orion chat: read-only, a scope switch at the top, where the answers come from under the box, it lasts for this
    browser session and exports as CSV; no dictation and no attaching a list ---- */
-const V11_ASK = { sig: ['Which signals are about companies in my outreach?', 'What changed this week?'], camp: ['Which campaign has the most prospects?', 'What is the difference between Gate 1 and Gate 2?'],
+const V11_ASK = { sig: ['Which signals are about companies in my outreach?', 'What changed this week?'], camp: [],
   prio: ['Why is the first one ranked first?', 'Which prospects raised money this year?', 'Who at Lonza knows them?'], reach: ['Who is the contact here?', 'When did we last talk to them?'] };
 function v11Scope() { return S.chatAbout === 'anything' ? 'all' : 'co'; }
 function v11Sel() { const id = S.tab === 'sig' ? (sigById(S.sigSel) || { who: {} }).who.id : S.selected[S.tab]; return id && v11M(id) ? id : null; }
