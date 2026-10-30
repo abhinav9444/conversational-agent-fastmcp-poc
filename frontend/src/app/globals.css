@@ -209,3 +209,8 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid rgba(49, 94, 2
   .message-stack { max-width: calc(100% - 8px); }
   .composer-area { padding: 9px 9px 11px; }
 }
+
+
+/* Orion response readability: darker final assistant text. */
+.message-row:not(.message-row-user) .message-bubble { color: #34445f; }
+.message-row:not(.message-row-user) .message-content strong { color: #263750; }
