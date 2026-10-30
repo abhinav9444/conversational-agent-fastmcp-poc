@@ -8324,9 +8324,19 @@ function orionChatPersist(session, tab) {
   orionChatSave();
 }
 function orionChatEscapeAnswer(value) {
-  return esc(String(value == null ? '' : value))
+  const formatted = esc(String(value == null ? '' : value))
     .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
     .replace(/\r?\n/g, '<br>');
+  let wordIndex = 0;
+  return formatted.replace(/(<[^>]+>|[^<]+)/g, part => {
+    if (part.charAt(0) === '<') return part;
+    return part.split(/(\s+)/).map(token => {
+      if (!token || /^\s+$/.test(token)) return token;
+      const delay = Math.min(wordIndex * 22, 1400);
+      wordIndex += 1;
+      return '<span class="orion-chat-word" style="animation-delay:' + delay + 'ms">' + token + '</span>';
+    }).join('');
+  });
 }
 function orionChatWhen(value) {
   const d = new Date(value);
@@ -8376,7 +8386,7 @@ document.head.insertAdjacentHTML('beforeend', '<style data-orion-chat-runtime>' 
   '.orion-history-title{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
   '.orion-history-delete{display:grid;place-items:center;box-sizing:border-box;flex:none;flex:0 0 30px;width:30px;height:30px;margin:0 5px 0 0;padding:0;border:0;border-radius:0;background:transparent!important;color:var(--s2-sub);opacity:0;overflow:visible;transition:opacity .15s ease,color .15s ease}.orion-history-row:hover .orion-history-delete,.orion-history-delete:focus-visible{opacity:1}.orion-history-delete:hover{background:transparent!important;color:#9c4141}.orion-history-delete:disabled{opacity:.35;cursor:default}.orion-history-delete svg{display:block;width:17px;height:17px;overflow:visible;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}@media(hover:none){.orion-history-delete{opacity:1}}' +
   '.orion-history-empty{padding:8px 4px 8px 20px;color:var(--s2-sub);font-size:12px}' +
-  '.orion-chat-pending{display:inline-block;color:transparent!important;font-style:normal!important;font-weight:650;background-image:linear-gradient(90deg,#526487 0%,#526487 39%,rgba(89,105,168,.92) 43%,#737bc4 46%,#9187d5 49%,#aa9be8 52%,#9187d5 55%,#737bc4 58%,rgba(89,105,168,.92) 61%,#526487 65%,#526487 100%);background-size:300% 100%;background-position:100% center;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:orionPendingShimmer 4.2s cubic-bezier(.45,0,.55,1) infinite}.orion-chat-error{color:#9c4141}@keyframes orionPendingShimmer{from{background-position:100% center}to{background-position:0% center}}@media(prefers-reduced-motion:reduce){.orion-chat-pending{animation:none;background-position:50% center}}' +
+  '.orion-chat-pending{display:inline-block;color:transparent!important;font-style:normal!important;font-weight:650;background-image:linear-gradient(90deg,#526487 0%,#526487 39%,rgba(89,105,168,.92) 43%,#737bc4 46%,#9187d5 49%,#aa9be8 52%,#9187d5 55%,#737bc4 58%,rgba(89,105,168,.92) 61%,#526487 65%,#526487 100%);background-size:300% 100%;background-position:100% center;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:orionPendingShimmer 4.2s cubic-bezier(.45,0,.55,1) infinite}.orion-chat-error{color:#9c4141}.orion-chat-word{display:inline-block;opacity:0;color:#526487;animation:orionWordReveal .42s cubic-bezier(.2,.7,.25,1) both;will-change:opacity,transform,color}@keyframes orionWordReveal{0%{opacity:0;transform:translateY(3px);color:#aa9be8}45%{opacity:1;color:#9187d5}100%{opacity:1;transform:translateY(0);color:#526487}}@keyframes orionPendingShimmer{from{background-position:100% center}to{background-position:0% center}}@media(prefers-reduced-motion:reduce){.orion-chat-pending{animation:none;background-position:50% center}.orion-chat-word{opacity:1;animation:none;transform:none;color:inherit;will-change:auto}}' +
   '</style>');
 const _orionBaseNavHtml = navHtml;
 navHtml = function () {
