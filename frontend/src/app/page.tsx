@@ -6,7 +6,7 @@ function installProgressEnhancement(frame: HTMLIFrameElement | null) {
 
   const script = document.createElement("script");
   script.id = "orion-progress-enhancement";
-  script.src = "/orion-progress.js";
+  script.src = "/orion-progress.js?v=2";
   script.async = true;
   document.head.appendChild(script);
 }
