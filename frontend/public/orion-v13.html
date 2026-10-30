@@ -8354,8 +8354,11 @@ function orionChatHistoryBlock() {
   const open = !!S.histOpen;
   const items = ORION_CHAT_SESSIONS.map(session => {
     const active = ORION_CHAT_ACTIVE_BY_TAB[session.tab] === session.id && S.tab === session.tab;
-    return '<button class="orion-history-select' + (active ? ' on' : '') + '" data-act="orionHistory" data-arg="' + esc(session.id) + '" title="' + esc(session.title + ' · ' + orionChatWhen(session.updatedAt)) + '">' +
-      '<span class="orion-history-title">' + esc(session.title) + '</span><span class="orion-history-when">' + esc(orionChatWhen(session.updatedAt)) + '</span></button>';
+    return '<div class="orion-history-row' + (active ? ' on' : '') + '">' +
+      '<button class="orion-history-select' + (active ? ' on' : '') + '" data-act="orionHistory" data-arg="' + esc(session.id) + '" title="' + esc(session.title + ' · ' + orionChatWhen(session.updatedAt)) + '">' +
+      '<span class="orion-history-title">' + esc(session.title) + '</span><span class="orion-history-when">' + esc(orionChatWhen(session.updatedAt)) + '</span></button>' +
+      '<button class="orion-history-delete" data-act="orionDeleteHistory" data-arg="' + esc(session.id) + '" title="Delete conversation" aria-label="Delete conversation: ' + esc(session.title) + '"' + (ORION_CHAT_PENDING ? ' disabled' : '') + '>' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7m4 4v5m4-5v5"/></svg></button></div>';
   }).join('');
   return '<div class="v11rt v12hist"><div class="orion-history-head">' +
     '<button class="v12ht" data-act="v12histTog" aria-expanded="' + open + '">Chat history' + ICON.chevd + '</button>' +
@@ -8367,9 +8370,10 @@ document.head.insertAdjacentHTML('beforeend', '<style data-orion-chat-runtime>' 
   '.orion-history-head{display:flex;align-items:center;gap:8px}.orion-history-head .v12ht{flex:1;min-width:0}' +
   '.orion-history-new{display:grid;place-items:center;width:25px;height:25px;flex:none;border:1px solid var(--s2-line);border-radius:6px;color:var(--s2-sub);font-size:17px}' +
   '.orion-history-new:hover{background:var(--s2-panel);color:var(--s2-ink)}.orion-history-new:disabled{opacity:.45;cursor:default}' +
-  '.orion-history-list{max-height:300px;overflow:auto}.orion-history-list .orion-history-select{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-width:0;padding:7px 6px 7px 20px;border-radius:5px;color:var(--s2-ink)}' +
-  '.orion-history-list .orion-history-select:hover,.orion-history-list .orion-history-select.on{background:var(--s2-panel)}' +
+  '.orion-history-list{max-height:300px;overflow:auto}.orion-history-row{display:flex;align-items:center;gap:3px;width:100%;min-width:0;padding-right:3px;border-radius:6px}.orion-history-list .orion-history-select{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:1;min-width:0;padding:7px 6px 7px 20px;border-radius:5px;color:var(--s2-ink);text-align:left}' +
+  '.orion-history-row:hover,.orion-history-row.on{background:var(--s2-panel)}.orion-history-list .orion-history-select:hover,.orion-history-list .orion-history-select.on{background:transparent}' +
   '.orion-history-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.orion-history-when{flex:none;color:var(--s2-sub);font-size:11px}' +
+  '.orion-history-delete{display:grid;place-items:center;flex:none;width:26px;height:26px;margin-right:3px;border:0;border-radius:6px;color:var(--s2-sub);opacity:0;transition:opacity .15s ease,background .15s ease,color .15s ease}.orion-history-row:hover .orion-history-delete,.orion-history-delete:focus-visible{opacity:1}.orion-history-delete:hover{background:rgba(156,65,65,.10);color:#9c4141}.orion-history-delete:disabled{opacity:.35;cursor:default}.orion-history-delete svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}@media(hover:none){.orion-history-delete{opacity:1}}' +
   '.orion-history-empty{padding:8px 4px 8px 20px;color:var(--s2-sub);font-size:12px}' +
   '.orion-chat-pending{display:inline-block;color:transparent!important;font-style:normal!important;font-weight:650;background-image:linear-gradient(90deg,#526487 0%,#526487 39%,rgba(89,105,168,.92) 43%,#737bc4 46%,#9187d5 49%,#aa9be8 52%,#9187d5 55%,#737bc4 58%,rgba(89,105,168,.92) 61%,#526487 65%,#526487 100%);background-size:300% 100%;background-position:100% center;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:orionPendingShimmer 4.2s cubic-bezier(.45,0,.55,1) infinite}.orion-chat-error{color:#9c4141}@keyframes orionPendingShimmer{from{background-position:100% center}to{background-position:0% center}}@media(prefers-reduced-motion:reduce){.orion-chat-pending{animation:none;background-position:50% center}}' +
   '</style>');
@@ -8413,6 +8417,30 @@ ACTIONS.orionHistory = id => {
   S.histOn = session.id;
   S.chatMode = 'normal';
   orionChatSave();
+};
+ACTIONS.orionDeleteHistory = id => {
+  if (ORION_CHAT_PENDING) return;
+  const session = ORION_CHAT_SESSIONS.find(s => s.id === id);
+  if (!session) return;
+  const label = session.title || 'this conversation';
+  if (!window.confirm('Delete "' + label + '"? This conversation will be removed from chat history.')) return;
+  ORION_CHAT_SESSIONS = ORION_CHAT_SESSIONS.filter(s => s.id !== id);
+  const wasActive = ORION_CHAT_ACTIVE_BY_TAB[session.tab] === id;
+  if (wasActive) {
+    const replacement = ORION_CHAT_SESSIONS.find(s => s.tab === session.tab);
+    if (replacement) {
+      ORION_CHAT_ACTIVE_BY_TAB[session.tab] = replacement.id;
+      S.chat[session.tab] = clone(replacement.messages);
+      S.histOn = replacement.id;
+    } else {
+      delete ORION_CHAT_ACTIVE_BY_TAB[session.tab];
+      S.chat[session.tab] = [];
+      S.histOn = null;
+    }
+    if (S.tab === session.tab) S.chatMode = 'normal';
+  }
+  orionChatSave();
+  render();
 };
 respond = async function (rawText, via) {
   const message = String(rawText || '').trim();
